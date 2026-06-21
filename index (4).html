@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="so" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Sahal Finance – Maamul Lacagtaada</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --green: #1a7a4a;
+    --green-light: #22a25e;
+    --green-pale: #e8f5ee;
+    --gold: #c9a84c;
+    --dark: #0f1f17;
+    --text: #1a2e22;
+    --text-muted: #6b7f72;
+    --border: #d0e4d8;
+    --white: #ffffff;
+    --bg: #f4faf6;
+    --red: #d32f2f;
+    --red-pale: #fdecea;
+    --blue: #1565c0;
+    --blue-pale: #e3f0ff;
+    --radius: 14px;
+    --shadow: 0 2px 16px rgba(26,122,74,0.10);
+  }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+  }
+
+  /* ── AUTH SCREENS ── */
+  #auth-screen {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--dark) 0%, #1a4a2e 60%, var(--green) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .auth-card {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 40px 32px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+
+  .auth-logo {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .auth-logo .logo-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, var(--green), var(--green-light));
+    border-radius: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+
+  .auth-logo h1 {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--dark);
+    letter-spacing: -0.5px;
+  }
+
+  .auth-logo p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .auth-tabs {
+    display: flex;
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 24px;
+  }
+
+  .auth-tab {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    background: none;
+  }
+
+  .auth-tab.active {
+    background: var(--white);
+    color: var(--green);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-size: 15px;
+    color: var(--text);
+    background: var(--white);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+
+  .form-group input:focus {
+    border-color: var(--green);
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--green), var(--green-light));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    margin-top: 8px;
+  }
+
+  .btn-primary:hover { opacity: 0.92; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .auth-error {
+    background: var(--red-pale);
+    color: var(--red);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 14px;
+    display: none;
+  }
+
+  .auth-success {
+    background: var(--green-pale);
+    color: var(--green);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 14px;
+    display: none;
+  }
+
+  /* ── MAIN APP ── */
+  #main-app { display: none; }
+
+  /* TOP NAV */
+  .topnav {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .topnav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .topnav-brand .nav-logo {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--green), var(--green-light));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .topnav-brand span {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--dark);
+  }
+
+  .topnav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .user-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--green-pale);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    color: var(--green);
+    font-weight: 600;
+  }
+
+  .btn-logout {
+    padding: 6px 14px;
+    background: none;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+
+  .btn-logout:hover {
+    border-color: var(--red);
+    color: var(--red);
+  }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    display: flex;
+    z-index: 100;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 4px 8px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: var(--text-muted);
+    font-size: 10px;
+    font-weight: 600;
+    transition: color 0.2s;
+    gap: 3px;
+  }
+
+  .nav-item .nav-icon { font-size: 20px; }
+  .nav-item.active { color: var(--green); }
+
+  /* CONTENT */
+  .content {
+    padding: 16px 16px 80px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+
+  /* HERO BALANCE */
+  .hero-balance {
+    background: linear-gradient(135deg, var(--dark) 0%, #1a4a2e 100%);
+    border-radius: 20px;
+    padding: 24px 20px;
+    margin-bottom: 14px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-balance::after {
+    content: '💰';
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 40px;
+    opacity: 0.2;
+  }
+
+  .hero-balance .label {
+    font-size: 12px;
+    opacity: 0.7;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .hero-balance .amount {
+    font-size: 36px;
+    font-weight: 900;
+    margin: 6px 0;
+    letter-spacing: -1px;
+  }
+
+  .hero-balance .sub {
+    font-size: 13px;
+    opacity: 0.75;
+  }
+
+  .balance-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .balance-pill {
+    flex: 1;
+    background: rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .balance-pill .pill-label { font-size: 10px; opacity: 0.7; text-transform: uppercase; }
+  .balance-pill .pill-amount { font-size: 16px; font-weight: 800; margin-top: 2px; }
+
+  /* QUICK ADD */
+  .quick-add {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 14px;
+    border: 2px dashed var(--border);
+  }
+
+  .quick-add-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  .quick-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .quick-form input, .quick-form select {
+    padding: 10px 12px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .quick-form input:focus, .quick-form select:focus {
+    border-color: var(--green);
+  }
+
+  .quick-form input.full, .quick-form select.full {
+    grid-column: 1 / -1;
+  }
+
+  .btn-add {
+    grid-column: 1 / -1;
+    padding: 11px;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-add:hover { background: var(--green-light); }
+
+  .type-toggle {
+    grid-column: 1 / -1;
+    display: flex;
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 3px;
+  }
+
+  .type-btn {
+    flex: 1;
+    padding: 8px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+
+  .type-btn.active-income {
+    background: var(--green-pale);
+    color: var(--green);
+  }
+
+  .type-btn.active-expense {
+    background: var(--red-pale);
+    color: var(--red);
+  }
+
+  /* TRANSACTIONS */
+  .tx-list { }
+
+  .tx-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tx-item:last-child { border-bottom: none; }
+
+  .tx-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .tx-icon.income { background: var(--green-pale); }
+  .tx-icon.expense { background: var(--red-pale); }
+
+  .tx-info { flex: 1; min-width: 0; }
+  .tx-name { font-size: 14px; font-weight: 600; color: var(--text); }
+  .tx-cat { font-size: 12px; color: var(--text-muted); }
+
+  .tx-right { text-align: right; }
+  .tx-amount { font-size: 15px; font-weight: 700; }
+  .tx-amount.income { color: var(--green); }
+  .tx-amount.expense { color: var(--red); }
+  .tx-date { font-size: 11px; color: var(--text-muted); }
+
+  /* STATS */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .stat-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+
+  .stat-icon { font-size: 22px; margin-bottom: 6px; }
+  .stat-label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+  .stat-value { font-size: 20px; font-weight: 800; color: var(--text); margin-top: 2px; }
+
+  /* SAVINGS GOALS */
+  .goal-item {
+    margin-bottom: 14px;
+  }
+
+  .goal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .goal-name { font-size: 14px; font-weight: 600; }
+  .goal-amounts { font-size: 12px; color: var(--text-muted); }
+
+  .progress-bar {
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--green-light));
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+
+  .goal-pct { font-size: 12px; color: var(--green); font-weight: 700; margin-top: 4px; }
+
+  /* BUDGET */
+  .budget-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .budget-item:last-child { border-bottom: none; }
+
+  .budget-emoji { font-size: 22px; width: 36px; text-align: center; }
+  .budget-info { flex: 1; }
+  .budget-cat { font-size: 14px; font-weight: 600; }
+
+  .budget-bar-wrap { height: 6px; background: var(--border); border-radius: 3px; margin-top: 4px; }
+  .budget-bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s; }
+
+  .budget-amounts { text-align: right; font-size: 12px; color: var(--text-muted); font-weight: 600; }
+  .budget-spent { font-size: 14px; font-weight: 700; color: var(--text); }
+
+  /* PREMIUM GATE */
+  .premium-gate {
+    background: linear-gradient(135deg, #fff8e1, #fff3cd);
+    border: 2px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 24px 20px;
+    text-align: center;
+    margin-bottom: 14px;
+  }
+
+  .premium-gate .gate-icon { font-size: 36px; margin-bottom: 10px; }
+  .premium-gate h3 { font-size: 17px; font-weight: 800; color: var(--dark); margin-bottom: 6px; }
+  .premium-gate p { font-size: 13px; color: #7a6000; line-height: 1.5; margin-bottom: 16px; }
+
+  .btn-premium {
+    display: inline-block;
+    padding: 12px 28px;
+    background: linear-gradient(135deg, var(--gold), #e6b800);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  /* PROFILE */
+  .profile-header {
+    background: linear-gradient(135deg, var(--dark), #1a4a2e);
+    border-radius: 20px;
+    padding: 24px 20px;
+    color: white;
+    text-align: center;
+    margin-bottom: 14px;
+  }
+
+  .profile-avatar {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, var(--green), var(--green-light));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 12px;
+    border: 3px solid rgba(255,255,255,0.3);
+  }
+
+  .profile-name { font-size: 18px; font-weight: 800; }
+  .profile-email { font-size: 13px; opacity: 0.7; margin-top: 4px; }
+
+  .profile-badge {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .badge-free { background: rgba(255,255,255,0.15); }
+  .badge-premium { background: var(--gold); }
+
+  .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+
+  .menu-item:last-child { border-bottom: none; }
+  .menu-icon { font-size: 20px; width: 30px; text-align: center; }
+  .menu-label { flex: 1; font-size: 15px; font-weight: 600; color: var(--text); }
+  .menu-arrow { color: var(--text-muted); font-size: 14px; }
+
+  /* CHART */
+  .chart-wrap {
+    padding: 8px 0;
+  }
+
+  .chart-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 100px;
+    padding: 0 4px;
+  }
+
+  .chart-bar-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .chart-bar {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    min-height: 4px;
+    transition: height 0.5s ease;
+  }
+
+  .chart-bar.income-bar { background: var(--green); }
+  .chart-bar.expense-bar { background: #ffcdd2; }
+
+  .chart-label { font-size: 9px; color: var(--text-muted); font-weight: 600; }
+
+  .chart-legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 10px;
+    justify-content: center;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--text-muted);
+  }
+
+  .empty-state .empty-icon { font-size: 36px; margin-bottom: 8px; }
+  .empty-state p { font-size: 13px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--dark);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 999;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* LOADING */
+  .loading-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    color: white;
+    gap: 16px;
+  }
+
+  .loading-logo {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--green), var(--green-light));
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  .loading-text { font-size: 14px; opacity: 0.6; }
+
+  .spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(255,255,255,0.2);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* PAGE HEADER */
+  .page-header {
+    margin-bottom: 16px;
+  }
+
+  .page-header h2 {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--dark);
+  }
+
+  .page-header p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .section-title span { color: var(--text-muted); font-size: 12px; font-weight: 600; }
+
+  /* ADD GOAL FORM */
+  .add-goal-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* DEBT TRACKER */
+  .debt-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .debt-item:last-child { border-bottom: none; }
+  .debt-icon { font-size: 22px; }
+  .debt-info { flex: 1; }
+  .debt-name { font-size: 14px; font-weight: 600; }
+  .debt-due { font-size: 12px; color: var(--text-muted); }
+  .debt-amount { font-size: 15px; font-weight: 700; color: var(--red); }
+
+  /* RESPONSIVE */
+  @media (min-width: 500px) {
+    .content { padding: 20px 20px 90px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-screen" id="loading-screen">
+  <div class="loading-logo">💚</div>
+  <div style="font-size:20px;font-weight:800;">Sahal Finance</div>
+  <div class="spinner"></div>
+  <div class="loading-text">Waa la rarayo...</div>
+</div>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen" style="display:none;">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo-icon">💚</div>
+      <h1>Sahal Finance</h1>
+      <p>Maamul Lacagtaada</p>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('login')">Gal</button>
+      <button class="auth-tab" onclick="switchTab('signup')">Diiwaan Geli</button>
+    </div>
+
+    <div id="auth-error" class="auth-error"></div>
+    <div id="auth-success" class="auth-success"></div>
+
+    <!-- LOGIN FORM -->
+    <div id="login-form">
+      <div class="form-group">
+        <label>Email-kaaga</label>
+        <input type="email" id="login-email" placeholder="example@gmail.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label>Password-kaaga</label>
+        <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="btn-primary" onclick="doLogin()" id="login-btn">Gal →</button>
+    </div>
+
+    <!-- SIGNUP FORM -->
+    <div id="signup-form" style="display:none;">
+      <div class="form-group">
+        <label>Magacaaga</label>
+        <input type="text" id="signup-name" placeholder="Magacaaga oo buuxa">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="signup-email" placeholder="example@gmail.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label>Password (ugu yaraan 6 xaraf)</label>
+        <input type="password" id="signup-password" placeholder="••••••••" autocomplete="new-password">
+      </div>
+      <button class="btn-primary" onclick="doSignup()" id="signup-btn">Diiwaan Geli →</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="main-app">
+
+  <!-- TOP NAV -->
+  <nav class="topnav">
+    <div class="topnav-brand">
+      <div class="nav-logo">💚</div>
+      <span>Sahal Finance</span>
+    </div>
+    <div class="topnav-right">
+      <div class="user-badge">
+        <span>👤</span>
+        <span id="user-name-display">Ali</span>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">Bax</button>
+    </div>
+  </nav>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- HOME PAGE -->
+    <div class="page active" id="page-home">
+      <div class="page-header">
+        <h2 id="greeting-text">Subax Wanaagsan 👋</h2>
+        <p>Xaaladda maaliyadda maanta</p>
+      </div>
+
+      <!-- Hero Balance -->
+      <div class="hero-balance">
+        <div class="label">Lacagta Guud</div>
+        <div class="amount" id="hero-balance">$0.00</div>
+        <div class="sub" id="hero-sub">Wali waxba kuma darin</div>
+        <div class="balance-row">
+          <div class="balance-pill">
+            <div class="pill-label">Dakhliga</div>
+            <div class="pill-amount" id="hero-income">$0</div>
+          </div>
+          <div class="balance-pill">
+            <div class="pill-label">Kharashka</div>
+            <div class="pill-amount" id="hero-expense">$0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Add -->
+      <div class="quick-add">
+        <div class="quick-add-title">➕ Ku Dar Lacag</div>
+        <div class="quick-form">
+          <div class="type-toggle">
+            <button class="type-btn active-income" id="type-income" onclick="setType('income')">📈 Dakhli</button>
+            <button class="type-btn" id="type-expense" onclick="setType('expense')">📉 Kharasho</button>
+          </div>
+          <input type="number" id="tx-amount" placeholder="Lacagta ($)" step="0.01" min="0">
+          <select id="tx-category">
+            <option value="">Nooca...</option>
+          </select>
+          <input type="text" id="tx-desc" placeholder="Sharaxaad..." class="full">
+          <button class="btn-add" onclick="addTransaction()">✓ Ku Dar</button>
+        </div>
+      </div>
+
+      <!-- Recent Transactions -->
+      <div class="section-title">
+        Kharashyada Dambe
+        <span onclick="switchPage('reports')" style="cursor:pointer;">Dhammaan →</span>
+      </div>
+      <div class="card" id="home-tx-list">
+        <div class="empty-state">
+          <div class="empty-icon">📊</div>
+          <p>Wali lacag kuma darin. Ku dar kharashkaaga!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPORTS PAGE -->
+    <div class="page" id="page-reports">
+      <div class="page-header">
+        <h2>📊 Warbixinta</h2>
+        <p>Kharashka bishaan</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📈</div>
+          <div class="stat-label">Dakhliga Bishaan</div>
+          <div class="stat-value" id="stat-income">$0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📉</div>
+          <div class="stat-label">Kharashka Bishaan</div>
+          <div class="stat-value" id="stat-expense">$0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">💰</div>
+          <div class="stat-label">Badbaadinta</div>
+          <div class="stat-value" id="stat-savings">$0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🔢</div>
+          <div class="stat-label">Wixii la Diiwaan</div>
+          <div class="stat-value" id="stat-count">0</div>
+        </div>
+      </div>
+
+      <!-- Chart -->
+      <div class="card">
+        <div class="card-title">Kharashka 6 Bishii</div>
+        <div class="chart-wrap">
+          <div class="chart-bars" id="chart-bars">
+          </div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Dakhli</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ffcdd2"></div>Kharasho</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- By Category -->
+      <div class="section-title">Nooc kasta</div>
+      <div class="card" id="category-breakdown">
+        <div class="empty-state"><div class="empty-icon">📂</div><p>Wali lacag kuma darin</p></div>
+      </div>
+
+      <!-- All Transactions -->
+      <div class="section-title">Dhammaan Kharashyada</div>
+      <div class="card" id="all-tx-list">
+        <div class="empty-state"><div class="empty-icon">📋</div><p>Wali lacag kuma darin</p></div>
+      </div>
+    </div>
+
+    <!-- SAVINGS PAGE -->
+    <div class="page" id="page-savings">
+      <div class="page-header">
+        <h2>🎯 Hadafyada</h2>
+        <p>Badbaadinta iyo hadafyada</p>
+      </div>
+
+      <div class="card" id="savings-goals-list">
+        <div class="empty-state"><div class="empty-icon">🎯</div><p>Hadaf cusub ku dar</p></div>
+      </div>
+
+      <!-- Add Goal -->
+      <div class="card">
+        <div class="card-title">Hadaf Cusub Ku Dar</div>
+        <div class="add-goal-form">
+          <input type="text" id="goal-name" placeholder="Hadafka (ex: Baabuur)" class="full" style="padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-size:14px;outline:none;">
+          <input type="number" id="goal-target" placeholder="Target ($)" style="padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-size:14px;outline:none;">
+          <input type="number" id="goal-saved" placeholder="Hadda ($)" style="padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-size:14px;outline:none;">
+          <button class="btn-add" onclick="addGoal()">✓ Ku Dar Hadaf</button>
+        </div>
+      </div>
+
+      <!-- PREMIUM: Debt Tracker -->
+      <div id="debt-section">
+        <div class="section-title">💳 Deyn Tracker</div>
+        <div id="debt-content"></div>
+      </div>
+    </div>
+
+    <!-- BUDGET PAGE -->
+    <div class="page" id="page-budget">
+      <div class="page-header">
+        <h2>📋 Miisaaniyad</h2>
+        <p>Xaddiga kharashka nooc kasta</p>
+      </div>
+
+      <div class="card" id="budget-list">
+        <div class="empty-state"><div class="empty-icon">📋</div><p>Miisaaniyad abuur</p></div>
+      </div>
+
+      <!-- Set Budget -->
+      <div class="card">
+        <div class="card-title">Miisaaniyad Cusub</div>
+        <div class="add-goal-form">
+          <select id="budget-cat" class="full" style="padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-size:14px;outline:none;background:white;">
+            <option value="">Nooca...</option>
+          </select>
+          <input type="number" id="budget-limit" placeholder="Xaddiga ($)" class="full" style="padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-size:14px;outline:none;">
+          <button class="btn-add" onclick="addBudget()">✓ Ku Dar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE PAGE -->
+    <div class="page" id="page-profile">
+      <div class="profile-header">
+        <div class="profile-avatar">👤</div>
+        <div class="profile-name" id="profile-name">Magacaaga</div>
+        <div class="profile-email" id="profile-email">email@gmail.com</div>
+        <div class="profile-badge badge-free" id="profile-badge">🆓 Free Tier</div>
+      </div>
+
+      <!-- Premium CTA -->
+      <div class="premium-gate" id="premium-cta">
+        <div class="gate-icon">⭐</div>
+        <h3>Premium Hel — $50</h3>
+        <p>Premium-ku wuxuu kuu furi doonaa: AI chat af Soomaali, Debt tracker, Cloud sync, iyo talo maaliyadeed oo shaqsi ah. Waa package mentorship ah.</p>
+        <button class="btn-premium" onclick="showToast('Xiriir: +252 XX XXX XXXX')">Hel Premium →</button>
+      </div>
+
+      <div class="card">
+        <div class="menu-item" onclick="exportData()">
+          <div class="menu-icon">📥</div>
+          <div class="menu-label">Data Soo Saar (CSV)</div>
+          <div class="menu-arrow">›</div>
+        </div>
+        <div class="menu-item" onclick="clearData()">
+          <div class="menu-icon">🗑️</div>
+          <div class="menu-label">Data Nadiifi</div>
+          <div class="menu-arrow">›</div>
+        </div>
+        <div class="menu-item" onclick="doLogout()">
+          <div class="menu-icon">🚪</div>
+          <div class="menu-label">Ka Bax</div>
+          <div class="menu-arrow">›</div>
+        </div>
+      </div>
+
+      <div style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:10px;">
+        Sahal Finance v2.0 · Maamul Lacagtaada
+      </div>
+    </div>
+
+  </div><!-- end content -->
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" onclick="switchPage('home')">
+      <span class="nav-icon">🏠</span>Hoyga
+    </button>
+    <button class="nav-item" onclick="switchPage('reports')">
+      <span class="nav-icon">📊</span>Warbixin
+    </button>
+    <button class="nav-item" onclick="switchPage('savings')">
+      <span class="nav-icon">🎯</span>Hadafyo
+    </button>
+    <button class="nav-item" onclick="switchPage('budget')">
+      <span class="nav-icon">📋</span>Miisaan
+    </button>
+    <button class="nav-item" onclick="switchPage('profile')">
+      <span class="nav-icon">👤</span>Profile
+    </button>
+  </nav>
+
+</div><!-- end main-app -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// SUPABASE CONFIG
+// ══════════════════════════════════════════════
+const SUPABASE_URL = 'https://ktklcsgmrrwgmzcncuwa.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_c7tpJGfIiN8JzOB6qExPeQ_6IatGV93';
+
+const api = (path, opts = {}) => fetch(`${SUPABASE_URL}${path}`, {
+  headers: {
+    'apikey': SUPABASE_KEY,
+    'Authorization': `Bearer ${getToken() || SUPABASE_KEY}`,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=representation',
+    ...opts.headers
+  },
+  ...opts
+});
+
+const authApi = (path, body, method = 'POST') => fetch(`${SUPABASE_URL}/auth/v1${path}`, {
+  method,
+  headers: {
+    'apikey': SUPABASE_KEY,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(body)
+});
+
+// ══════════════════════════════════════════════
+// SESSION
+// ══════════════════════════════════════════════
+let currentUser = null;
+
+function getToken() { return localStorage.getItem('sf_token'); }
+function setToken(t) { localStorage.setItem('sf_token', t); }
+function clearToken() { localStorage.removeItem('sf_token'); localStorage.removeItem('sf_user'); }
+
+function getStoredUser() {
+  try { return JSON.parse(localStorage.getItem('sf_user')); } catch { return null; }
+}
+
+function setStoredUser(u) { localStorage.setItem('sf_user', JSON.stringify(u)); }
+
+// ══════════════════════════════════════════════
+// CATEGORIES
+// ══════════════════════════════════════════════
+const INCOME_CATS = [
+  { id: 'mushahar', name: 'Mushaharka', emoji: '💼' },
+  { id: 'ganacsi', name: 'Ganacsiga', emoji: '🏪' },
+  { id: 'kiro', name: 'Kirada', emoji: '🏠' },
+  { id: 'wareejin', name: 'Wareejinta', emoji: '💸' },
+  { id: 'kale_dakhli', name: 'Kale', emoji: '📦' },
+];
+
+const EXPENSE_CATS = [
+  { id: 'cunto', name: 'Cuntada', emoji: '🍽️' },
+  { id: 'guri', name: 'Guriga', emoji: '🏠' },
+  { id: 'gaari', name: 'Gaariga', emoji: '🚗' },
+  { id: 'xanaano', name: 'Xanaanada', emoji: '👶' },
+  { id: 'waxbarasho', name: 'Waxbarasho', emoji: '📚' },
+  { id: 'caafimaad', name: 'Caafimaadka', emoji: '🏥' },
+  { id: 'dharka', name: 'Dharka', emoji: '👗' },
+  { id: 'internet', name: 'Internet/Telefon', emoji: '📱' },
+  { id: 'deyn', name: 'Bixinta Deynta', emoji: '💳' },
+  { id: 'sadaqo', name: 'Sadaqada/Zakat', emoji: '🤲' },
+  { id: 'kale_kharasho', name: 'Kale', emoji: '📦' },
+];
+
+let currentType = 'income';
+
+function setType(type) {
+  currentType = type;
+  document.getElementById('type-income').className = 'type-btn' + (type === 'income' ? ' active-income' : '');
+  document.getElementById('type-expense').className = 'type-btn' + (type === 'expense' ? ' active-expense' : '');
+  populateCategorySelects();
+}
+
+function populateCategorySelects() {
+  const cats = currentType === 'income' ? INCOME_CATS : EXPENSE_CATS;
+  const sel = document.getElementById('tx-category');
+  sel.innerHTML = '<option value="">Nooca...</option>' + cats.map(c => `<option value="${c.id}">${c.emoji} ${c.name}</option>`).join('');
+
+  const budgetSel = document.getElementById('budget-cat');
+  if (budgetSel) {
+    budgetSel.innerHTML = '<option value="">Nooca...</option>' + EXPENSE_CATS.map(c => `<option value="${c.id}">${c.emoji} ${c.name}</option>`).join('');
+  }
+}
+
+function getCatInfo(id) {
+  return [...INCOME_CATS, ...EXPENSE_CATS].find(c => c.id === id) || { name: id, emoji: '📦' };
+}
+
+// ══════════════════════════════════════════════
+// LOCAL DATA STORE (fallback + cache)
+// ══════════════════════════════════════════════
+function getLocalData(key) {
+  try { return JSON.parse(localStorage.getItem('sf_' + key) || '[]'); } catch { return []; }
+}
+
+function setLocalData(key, data) {
+  localStorage.setItem('sf_' + key, JSON.stringify(data));
+}
+
+// ══════════════════════════════════════════════
+// AUTH FUNCTIONS
+// ══════════════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t, i) => {
+    t.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'signup'));
+  });
+  document.getElementById('login-form').style.display = tab === 'login' ? '' : 'none';
+  document.getElementById('signup-form').style.display = tab === 'signup' ? '' : 'none';
+  hideAuthMessages();
+}
+
+function showAuthError(msg) {
+  const el = document.getElementById('auth-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+  document.getElementById('auth-success').style.display = 'none';
+}
+
+function showAuthSuccess(msg) {
+  const el = document.getElementById('auth-success');
+  el.textContent = msg;
+  el.style.display = 'block';
+  document.getElementById('auth-error').style.display = 'none';
+}
+
+function hideAuthMessages() {
+  document.getElementById('auth-error').style.display = 'none';
+  document.getElementById('auth-success').style.display = 'none';
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-password').value;
+  if (!email || !pass) return showAuthError('Email iyo password geli!');
+
+  const btn = document.getElementById('login-btn');
+  btn.textContent = 'Waa la rarayo...';
+  btn.disabled = true;
+  hideAuthMessages();
+
+  try {
+    const res = await authApi('/token?grant_type=password', { email, password: pass });
+    const data = await res.json();
+
+    if (data.error || data.error_description) {
+      showAuthError('Email ama password waa khalad. Isku day mar kale.');
+    } else {
+      setToken(data.access_token);
+      const user = { id: data.user.id, email: data.user.email, name: data.user.user_metadata?.name || email.split('@')[0] };
+      setStoredUser(user);
+      currentUser = user;
+      enterApp();
+    }
+  } catch (e) {
+    showAuthError('Xiriirka internet-ka ka fiiri oo isku day mar kale.');
+  }
+
+  btn.textContent = 'Gal →';
+  btn.disabled = false;
+}
+
+async function doSignup() {
+  const name = document.getElementById('signup-name').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const pass = document.getElementById('signup-password').value;
+
+  if (!name) return showAuthError('Magacaaga geli!');
+  if (!email) return showAuthError('Email-kaaga geli!');
+  if (pass.length < 6) return showAuthError('Password-ku waa inuu noqdaa ugu yaraan 6 xaraf!');
+
+  const btn = document.getElementById('signup-btn');
+  btn.textContent = 'Waa la abuurayaa...';
+  btn.disabled = true;
+  hideAuthMessages();
+
+  try {
+    const res = await authApi('/signup', { email, password: pass, data: { name } });
+    const data = await res.json();
+
+    if (data.error || data.error_description) {
+      showAuthError(data.error_description || 'Khalad ayaa dhacay. Isku day mar kale.');
+    } else if (data.access_token) {
+      setToken(data.access_token);
+      const user = { id: data.user.id, email: data.user.email, name };
+      setStoredUser(user);
+      currentUser = user;
+      enterApp();
+    } else {
+      showAuthSuccess('✅ Account la abuuray! Hadda gal.');
+      switchTab('login');
+    }
+  } catch (e) {
+    showAuthError('Xiriirka internet-ka ka fiiri oo isku day mar kale.');
+  }
+
+  btn.textContent = 'Diiwaan Geli →';
+  btn.disabled = false;
+}
+
+async function doLogout() {
+  if (!confirm('Ma hubtaa inaad ka baxeyso?')) return;
+  try { await api('/auth/v1/logout', { method: 'POST' }); } catch {}
+  clearToken();
+  currentUser = null;
+  document.getElementById('main-app').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+  showToast('Waa laga baxay ✓');
+}
+
+// ══════════════════════════════════════════════
+// ENTER APP
+// ══════════════════════════════════════════════
+function enterApp() {
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('main-app').style.display = 'block';
+
+  const u = currentUser;
+  const firstName = (u.name || u.email || 'Adiga').split(' ')[0];
+  document.getElementById('user-name-display').textContent = firstName;
+  document.getElementById('profile-name').textContent = u.name || firstName;
+  document.getElementById('profile-email').textContent = u.email;
+
+  const hr = new Date().getHours();
+  const greet = hr < 12 ? 'Subax Wanaagsan' : hr < 17 ? 'Galab Wanaagsan' : 'Habeyn Wanaagsan';
+  document.getElementById('greeting-text').textContent = `${greet}, ${firstName}! 👋`;
+
+  populateCategorySelects();
+  renderAll();
+}
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+function switchPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  const pages = ['home', 'reports', 'savings', 'budget', 'profile'];
+  const idx = pages.indexOf(page);
+  if (idx >= 0) document.querySelectorAll('.nav-item')[idx].classList.add('active');
+
+  if (page === 'reports') renderReports();
+  if (page === 'savings') renderSavings();
+  if (page === 'budget') renderBudget();
+}
+
+// ══════════════════════════════════════════════
+// TRANSACTIONS
+// ══════════════════════════════════════════════
+function addTransaction() {
+  const amount = parseFloat(document.getElementById('tx-amount').value);
+  const cat = document.getElementById('tx-category').value;
+  const desc = document.getElementById('tx-desc').value.trim();
+
+  if (!amount || amount <= 0) return showToast('⚠️ Lacagta geli!');
+  if (!cat) return showToast('⚠️ Nooca dooro!');
+
+  const tx = {
+    id: Date.now().toString(),
+    type: currentType,
+    amount,
+    category: cat,
+    description: desc || getCatInfo(cat).name,
+    date: new Date().toISOString(),
+    user_id: currentUser?.id
+  };
+
+  const txs = getLocalData('transactions');
+  txs.unshift(tx);
+  setLocalData('transactions', txs);
+
+  document.getElementById('tx-amount').value = '';
+  document.getElementById('tx-desc').value = '';
+
+  showToast(`✅ ${currentType === 'income' ? 'Dakhli' : 'Kharasho'} la diiwaan geliyay!`);
+  renderAll();
+}
+
+function getTransactions() {
+  return getLocalData('transactions').filter(t => t.user_id === currentUser?.id);
+}
+
+function deleteTransaction(id) {
+  if (!confirm('Ma tirtirtaa?')) return;
+  const txs = getLocalData('transactions').filter(t => t.id !== id);
+  setLocalData('transactions', txs);
+  renderAll();
+  showToast('🗑️ La tirtiray');
+}
+
+// ══════════════════════════════════════════════
+// RENDER HOME
+// ══════════════════════════════════════════════
+function renderAll() {
+  const txs = getTransactions();
+  const income = txs.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+  const expense = txs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+  const balance = income - expense;
+
+  document.getElementById('hero-balance').textContent = fmt(balance);
+  document.getElementById('hero-income').textContent = fmt(income);
+  document.getElementById('hero-expense').textContent = fmt(expense);
+
+  const sub = txs.length === 0 ? 'Wali waxba kuma darin' :
+    balance >= 0 ? `Aad baad u fiicantahay 👍` : `⚠️ Kharashku waa ka badan yahay`;
+  document.getElementById('hero-sub').textContent = sub;
+
+  // Recent 5
+  const container = document.getElementById('home-tx-list');
+  const recent = txs.slice(0, 5);
+  if (recent.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="empty-icon">📊</div><p>Wali lacag kuma darin. Ku dar kharashkaaga!</p></div>';
+  } else {
+    container.innerHTML = recent.map(t => txCard(t)).join('');
+  }
+}
+
+function txCard(t) {
+  const cat = getCatInfo(t.category);
+  const d = new Date(t.date);
+  const dateStr = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
+  return `
+    <div class="tx-item">
+      <div class="tx-icon ${t.type}">${cat.emoji}</div>
+      <div class="tx-info">
+        <div class="tx-name">${t.description}</div>
+        <div class="tx-cat">${cat.name} · ${dateStr}</div>
+      </div>
+      <div class="tx-right">
+        <div class="tx-amount ${t.type}">${t.type === 'income' ? '+' : '-'}${fmt(t.amount)}</div>
+        <div class="tx-date" onclick="deleteTransaction('${t.id}')" style="cursor:pointer;color:#d32f2f;">🗑️</div>
+      </div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════
+// RENDER REPORTS
+// ══════════════════════════════════════════════
+function renderReports() {
+  const txs = getTransactions();
+  const now = new Date();
+  const thisMonth = txs.filter(t => {
+    const d = new Date(t.date);
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  });
+
+  const income = thisMonth.filter(t => t.type === 'income').reduce((s,t) => s+t.amount, 0);
+  const expense = thisMonth.filter(t => t.type === 'expense').reduce((s,t) => s+t.amount, 0);
+
+  document.getElementById('stat-income').textContent = fmt(income);
+  document.getElementById('stat-expense').textContent = fmt(expense);
+  document.getElementById('stat-savings').textContent = fmt(income - expense);
+  document.getElementById('stat-count').textContent = txs.length;
+
+  // Chart - last 6 months
+  const months = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const label = d.toLocaleString('so', { month: 'short' }).slice(0,3) || ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()].slice(0,3);
+    const mInc = txs.filter(t => { const td = new Date(t.date); return td.getMonth()===d.getMonth()&&td.getFullYear()===d.getFullYear()&&t.type==='income'; }).reduce((s,t)=>s+t.amount,0);
+    const mExp = txs.filter(t => { const td = new Date(t.date); return td.getMonth()===d.getMonth()&&td.getFullYear()===d.getFullYear()&&t.type==='expense'; }).reduce((s,t)=>s+t.amount,0);
+    months.push({ label, inc: mInc, exp: mExp });
+  }
+
+  const maxVal = Math.max(...months.map(m => Math.max(m.inc, m.exp)), 1);
+  const chartEl = document.getElementById('chart-bars');
+  chartEl.innerHTML = months.map(m => `
+    <div class="chart-bar-group">
+      <div class="chart-bar income-bar" style="height:${Math.max(m.inc/maxVal*80,m.inc>0?4:0)}px"></div>
+      <div class="chart-bar expense-bar" style="height:${Math.max(m.exp/maxVal*80,m.exp>0?4:0)}px"></div>
+      <div class="chart-label">${m.label}</div>
+    </div>`).join('');
+
+  // Category breakdown (expenses only)
+  const expTxs = txs.filter(t => t.type === 'expense');
+  const byCat = {};
+  expTxs.forEach(t => { byCat[t.category] = (byCat[t.category]||0) + t.amount; });
+  const totalExp = Object.values(byCat).reduce((s,v)=>s+v,0) || 1;
+  const catEl = document.getElementById('category-breakdown');
+  const catEntries = Object.entries(byCat).sort((a,b)=>b[1]-a[1]);
+  if (catEntries.length === 0) {
+    catEl.innerHTML = '<div class="empty-state"><div class="empty-icon">📂</div><p>Wali kharasho kuma darin</p></div>';
+  } else {
+    catEl.innerHTML = catEntries.map(([id, amt]) => {
+      const c = getCatInfo(id);
+      const pct = Math.round(amt/totalExp*100);
+      return `<div class="budget-item">
+        <div class="budget-emoji">${c.emoji}</div>
+        <div class="budget-info">
+          <div class="budget-cat">${c.name}</div>
+          <div class="budget-bar-wrap"><div class="budget-bar-fill" style="width:${pct}%;background:var(--red)"></div></div>
+        </div>
+        <div class="budget-amounts"><div class="budget-spent">${fmt(amt)}</div><div>${pct}%</div></div>
+      </div>`;
+    }).join('');
+  }
+
+  // All txs
+  const allEl = document.getElementById('all-tx-list');
+  if (txs.length === 0) {
+    allEl.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><p>Wali lacag kuma darin</p></div>';
+  } else {
+    allEl.innerHTML = txs.slice(0, 50).map(t => txCard(t)).join('');
+  }
+}
+
+// ══════════════════════════════════════════════
+// SAVINGS / GOALS
+// ══════════════════════════════════════════════
+function addGoal() {
+  const name = document.getElementById('goal-name').value.trim();
+  const target = parseFloat(document.getElementById('goal-target').value);
+  const saved = parseFloat(document.getElementById('goal-saved').value) || 0;
+  if (!name || !target) return showToast('⚠️ Hadafka iyo lacagta geli!');
+
+  const goals = getLocalData('goals');
+  goals.push({ id: Date.now().toString(), name, target, saved, user_id: currentUser?.id });
+  setLocalData('goals', goals);
+
+  document.getElementById('goal-name').value = '';
+  document.getElementById('goal-target').value = '';
+  document.getElementById('goal-saved').value = '';
+
+  showToast('🎯 Hadaf la diiwaan geliyay!');
+  renderSavings();
+}
+
+function renderSavings() {
+  const goals = getLocalData('goals').filter(g => g.user_id === currentUser?.id);
+  const el = document.getElementById('savings-goals-list');
+
+  if (goals.length === 0) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">🎯</div><p>Hadaf cusub ku dar hoose</p></div>';
+  } else {
+    el.innerHTML = goals.map(g => {
+      const pct = Math.min(Math.round(g.saved / g.target * 100), 100);
+      return `<div class="goal-item">
+        <div class="goal-header">
+          <div class="goal-name">🎯 ${g.name}</div>
+          <div class="goal-amounts">${fmt(g.saved)} / ${fmt(g.target)}</div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+        <div class="goal-pct">${pct}% la dhammaystay</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Debt section
+  const debtEl = document.getElementById('debt-content');
+  debtEl.innerHTML = `<div class="premium-gate">
+    <div class="gate-icon">🔒</div>
+    <h3>Premium Feature</h3>
+    <p>Deyn Tracker-ka si aad ula soocdo deyntaada — Premium package-ka ku jira ($50).</p>
+    <button class="btn-premium" onclick="showToast('Xiriir: WhatsApp +252 XX XXX XXXX')">Hel Premium →</button>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════
+// BUDGET
+// ══════════════════════════════════════════════
+function addBudget() {
+  const cat = document.getElementById('budget-cat').value;
+  const limit = parseFloat(document.getElementById('budget-limit').value);
+  if (!cat || !limit) return showToast('⚠️ Nooca iyo xaddiga geli!');
+
+  const budgets = getLocalData('budgets');
+  const existing = budgets.findIndex(b => b.cat === cat && b.user_id === currentUser?.id);
+  if (existing >= 0) { budgets[existing].limit = limit; }
+  else { budgets.push({ id: Date.now().toString(), cat, limit, user_id: currentUser?.id }); }
+  setLocalData('budgets', budgets);
+
+  document.getElementById('budget-limit').value = '';
+  showToast('📋 Miisaaniyad la diiwaan geliyay!');
+  renderBudget();
+}
+
+function renderBudget() {
+  const budgets = getLocalData('budgets').filter(b => b.user_id === currentUser?.id);
+  const txs = getTransactions();
+  const el = document.getElementById('budget-list');
+
+  if (budgets.length === 0) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><p>Miisaaniyad abuur hoose</p></div>';
+    return;
+  }
+
+  el.innerHTML = budgets.map(b => {
+    const c = getCatInfo(b.cat);
+    const spent = txs.filter(t => t.type === 'expense' && t.category === b.cat).reduce((s,t)=>s+t.amount,0);
+    const pct = Math.min(Math.round(spent / b.limit * 100), 100);
+    const color = pct >= 90 ? 'var(--red)' : pct >= 70 ? 'var(--gold)' : 'var(--green)';
+    return `<div class="budget-item">
+      <div class="budget-emoji">${c.emoji}</div>
+      <div class="budget-info">
+        <div class="budget-cat">${c.name}</div>
+        <div class="budget-bar-wrap"><div class="budget-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+      </div>
+      <div class="budget-amounts">
+        <div class="budget-spent" style="color:${color}">${fmt(spent)}</div>
+        <div>/ ${fmt(b.limit)}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  populateCategorySelects();
+}
+
+// ══════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════
+function fmt(n) { return '$' + (n || 0).toLocaleString('en', { minimumFractionDigits: 0, maximumFractionDigits: 0 }); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function exportData() {
+  const txs = getTransactions();
+  if (txs.length === 0) return showToast('⚠️ Wali data kuma jirto!');
+  const csv = ['Date,Type,Category,Description,Amount'].concat(
+    txs.map(t => `${new Date(t.date).toLocaleDateString()},${t.type},${getCatInfo(t.category).name},${t.description},${t.amount}`)
+  ).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = 'sahal-finance.csv';
+  a.click();
+  showToast('📥 CSV la soo saaray!');
+}
+
+function clearData() {
+  if (!confirm('Xogta oo dhan ma tirtirtaa? Tan lama soo celin karo!')) return;
+  ['transactions','goals','budgets'].forEach(k => setLocalData(k, []));
+  renderAll();
+  showToast('🗑️ Xogta la nadiifiyay');
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+window.onload = async () => {
+  await new Promise(r => setTimeout(r, 1200));
+  document.getElementById('loading-screen').style.display = 'none';
+
+  const stored = getStoredUser();
+  const token = getToken();
+
+  if (stored && token) {
+    currentUser = stored;
+    enterApp();
+  } else {
+    document.getElementById('auth-screen').style.display = 'flex';
+  }
+};
+</script>
+</body>
+</html>
